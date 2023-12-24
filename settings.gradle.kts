@@ -1,1 +1,1 @@
-rootProject.name = "llm-hub"
+rootProject.name = "llm-switch"

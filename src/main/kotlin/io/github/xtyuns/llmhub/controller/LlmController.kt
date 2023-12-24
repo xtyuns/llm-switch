@@ -4,27 +4,37 @@ import io.github.xtyuns.llmhub.llm.LlmService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/llm")
+@RequestMapping("/v1/llm")
 class LlmController(
     val llmService: LlmService
 ) {
-    @RequestMapping("/{apiStyle}/**")
-    fun hello(@PathVariable apiStyle: String, request: HttpServletRequest, response: HttpServletResponse) {
+    @RequestMapping("/{channelName}/{brandName}/**")
+    fun invoke(
+        @PathVariable channelName: String,
+        @PathVariable brandName: String,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+    ) {
         val uri = request.requestURI
-        val indexOf = "${uri}/".indexOf("/${apiStyle}/")
-        val apiPath = uri.substring(indexOf + apiStyle.length + 1)
+        val prefix = "/${channelName}/${brandName}/"
+        val indexOf = "${uri}/".indexOf(prefix)
+        val apiPath = uri.substring(indexOf + prefix.length - 1)
+
         val requestHeaders = HttpHeaders()
         for (headerName in request.headerNames) {
             requestHeaders[headerName] = request.getHeaders(headerName).toList()
         }
 
         val (httpStatus, responseHeaders, responseText) = llmService.process(
-            apiStyle,
+            channelName,
+            brandName,
+            HttpMethod.valueOf(request.method),
             apiPath,
             requestHeaders,
             request.reader.readText()
