@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController
 class LlmController(
     val llmService: LlmService
 ) {
-    @RequestMapping("/{channelName}/{brandName}/**")
+    @RequestMapping("/{channelTag}/{brandName}/**")
     fun invoke(
-        @PathVariable channelName: String,
+        @PathVariable channelTag: String,
         @PathVariable brandName: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
     ) {
         val uri = request.requestURI
-        val prefix = "/${channelName}/${brandName}/"
+        val prefix = "/${channelTag}/${brandName}/"
         val indexOf = "${uri}/".indexOf(prefix)
         val apiPath = uri.substring(indexOf + prefix.length - 1)
 
@@ -32,7 +32,7 @@ class LlmController(
         }
 
         val (httpStatus, responseHeaders, responseText) = llmService.process(
-            channelName,
+            channelTag,
             brandName,
             HttpMethod.valueOf(request.method),
             apiPath,

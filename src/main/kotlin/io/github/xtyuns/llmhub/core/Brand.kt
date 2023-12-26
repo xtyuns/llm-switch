@@ -5,10 +5,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URI
+import org.springframework.web.client.RestTemplate
+import java.util.zip.GZIPInputStream
 
 interface Brand {
     private val logger: Logger
@@ -25,27 +23,33 @@ interface Brand {
         headers: HttpHeaders,
         data: String
     ): Triple<HttpStatus, HttpHeaders, String> {
-        val connection = URI("${baseUrl}${path}").toURL().openConnection() as HttpURLConnection
-        connection.requestMethod = method.name()
-        headers.forEach { (k, v) -> connection.setRequestProperty(k, v.joinToString(";")) }
-        connection.doOutput = true
-        connection.outputStream.write(data.toByteArray())
+        val url = "${baseUrl}${path}"
+        return request(url, method, headers, data)
+    }
 
-        val responseCode = connection.responseCode
-        val responseHeaders = HttpHeaders().also {
-            connection.headerFields.filter { (k, _) -> k != null }.forEach { (k, v) -> it[k] = v }
-        }
-        val sbd = StringBuilder()
-        try {
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
-            var line: String?
-            while (reader.readLine().also { line = it } != null) {
-                sbd.append(line)
+    fun request(
+        url: String,
+        method: HttpMethod,
+        headers: HttpHeaders,
+        data: String
+    ): Triple<HttpStatus, HttpHeaders, String> {
+        val restTemplate = RestTemplate()
+        val executed = restTemplate.execute(url, method, { request ->
+            headers.remove(HttpHeaders.CONTENT_LENGTH)
+            request.headers.addAll(headers)
+            val bys = data.toByteArray(Charsets.UTF_8)
+            request.body.write(bys)
+        }, { response ->
+            val responseHeaders = HttpHeaders()
+            response.headers.forEach { (key, value) ->
+                responseHeaders[key] = value
             }
-        } catch (e: Exception) {
-            logger.error("read response error", e)
-        }
-
-        return Triple(HttpStatus.valueOf(responseCode), responseHeaders, sbd.toString())
+            responseHeaders.remove(HttpHeaders.CONTENT_LENGTH)
+            val gzipInputStream = GZIPInputStream(response.body)
+            val responseData = String(gzipInputStream.readAllBytes(), Charsets.UTF_8)
+            logger.info("response: {}", responseData)
+            Triple(HttpStatus.valueOf(response.statusCode.value()), responseHeaders, responseData)
+        })
+        return executed!!
     }
 }

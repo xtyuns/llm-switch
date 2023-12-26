@@ -12,7 +12,7 @@ class LlmService(
     private val brands: List<Brand>
 ) {
     fun process(
-        channelName: String,
+        channelTag: String,
         brandName: String,
         requestMethod: HttpMethod,
         requestPath: String,
@@ -22,7 +22,7 @@ class LlmService(
         val brand =
             getBrand(brandName) ?: return Triple(HttpStatus.BAD_REQUEST, HttpHeaders.EMPTY, "brand not found")
         val channel =
-            getChannel(channelName) ?: return Triple(HttpStatus.BAD_REQUEST, HttpHeaders.EMPTY, "channel not found")
+            getChannel(channelTag) ?: return Triple(HttpStatus.BAD_REQUEST, HttpHeaders.EMPTY, "channel not found")
 
         val channelRequestData = if (brand.name == channel.brand.name) {
             requestData
@@ -48,9 +48,9 @@ class LlmService(
         return Triple(responseStatus, responseHeaders, responseData)
     }
 
-    private fun getChannel(channelName: String): Channel? {
+    private fun getChannel(channelTag: String): Channel? {
         val brand = brands.firstOrNull() ?: return null
-        return Channel(channelName, brand, 0)
+        return Channel(channelTag, brand, 0)
     }
 
     private fun getBrand(apiStyle: String): Brand? {
