@@ -1,5 +1,6 @@
 package io.github.xtyuns.llmhub.controller
 
+import io.github.xtyuns.llmhub.core.RequestBundle
 import io.github.xtyuns.llmhub.llm.LlmService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -31,22 +32,23 @@ class LlmController(
             requestHeaders[headerName] = request.getHeaders(headerName).toList()
         }
 
-        val (httpStatus, responseHeaders, responseText) = llmService.process(
-            channelTag,
-            brandName,
+        val rawRequestBundle = RequestBundle(
             HttpMethod.valueOf(request.method),
             apiPath,
+            request.parameterMap,
             requestHeaders,
             request.reader.readText()
         )
 
-        response.status = httpStatus.value()
-        for (headerName in responseHeaders.keys) {
-            responseHeaders[headerName]?.forEach {
-                response.addHeader(headerName, it)
+        val responseBundle = llmService.process(channelTag, brandName, rawRequestBundle)
+
+        response.status = responseBundle.responseStatus.value()
+        for (item in responseBundle.responseHeaders.entries) {
+            item.value?.forEach {
+                response.addHeader(item.key, it)
             }
         }
-        response.writer.write(responseText)
+        response.writer.write(responseBundle.responseBody)
         response.flushBuffer()
     }
 }

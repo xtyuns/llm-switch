@@ -6,9 +6,9 @@ import io.github.xtyuns.llmhub.llm.codec.DashScopeResponseCodec
 import org.springframework.stereotype.Component
 
 @Component
-class DashScopeBrand: Brand {
+class DashScopeBrand : Brand {
     override val name = "dashscope"
     override val requestCodec = DashScopeRequestCodec()
     override val responseCodec = DashScopeResponseCodec()
-    override val baseUrl = "https://dashscope.aliyuncs.com"
+    override val defaultBaseUrl = "https://dashscope.aliyuncs.com"
 }

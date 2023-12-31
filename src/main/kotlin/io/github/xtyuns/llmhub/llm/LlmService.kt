@@ -1,9 +1,7 @@
 package io.github.xtyuns.llmhub.llm
 
-import io.github.xtyuns.llmhub.core.Brand
-import io.github.xtyuns.llmhub.core.Channel
+import io.github.xtyuns.llmhub.core.*
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
@@ -14,43 +12,57 @@ class LlmService(
     fun process(
         channelTag: String,
         brandName: String,
-        requestMethod: HttpMethod,
-        requestPath: String,
-        requestHeaders: HttpHeaders,
-        requestData: String,
-    ): Triple<HttpStatus, HttpHeaders, String> {
-        val brand =
-            getBrand(brandName) ?: return Triple(HttpStatus.BAD_REQUEST, HttpHeaders.EMPTY, "brand not found")
-        val channel =
-            getChannel(channelTag) ?: return Triple(HttpStatus.BAD_REQUEST, HttpHeaders.EMPTY, "channel not found")
-
-        val channelRequestData = if (brand.name == channel.brand.name) {
-            requestData
-        } else {
-            val encodeRequestData = brand.requestCodec.encode(requestData, requestPath)
-            channel.brand.requestCodec.decode(encodeRequestData, requestPath)
-        }
-
-        val (responseStatus, responseHeaders, channelResponseData) = channel.brand.invoke(
-            requestMethod,
-            requestPath,
-            requestHeaders,
-            channelRequestData
+        rawRequestBundle: RequestBundle,
+    ): ResponseBundle {
+        val brand = getBrand(brandName) ?: return ResponseBundle(
+            HttpStatus.BAD_REQUEST,
+            HttpHeaders.EMPTY,
+            "brand not found",
+            rawRequestBundle
+        )
+        val channel = getChannel(channelTag) ?: return ResponseBundle(
+            HttpStatus.BAD_REQUEST,
+            HttpHeaders.EMPTY,
+            "channel not found",
+            rawRequestBundle
         )
 
-        val responseData = if (brand.name == channel.brand.name) {
-            channelResponseData
+        val codedRequestBundle = if (brand.name == channel.brand.name) {
+            CodedRequestBundle(
+                Scene.OTHER,
+                rawRequestBundle.requestMethod,
+                rawRequestBundle.requestPath,
+                rawRequestBundle.requestParameterMap,
+                rawRequestBundle.requestHeaders,
+                rawRequestBundle.requestBody,
+                rawRequestBundle,
+            )
         } else {
-            val encodeResponseData = channel.brand.responseCodec.encode(channelResponseData, requestPath)
-            brand.responseCodec.decode(encodeResponseData, requestPath)
+            brand.requestCodec.encode(rawRequestBundle)
         }
+        val requestBundle = channel.brand.requestCodec.decode(codedRequestBundle)
 
-        return Triple(responseStatus, responseHeaders, responseData)
+        val rawResponseBundle = channel.invoke(requestBundle)
+
+        val codedResponseBundle = if (brand.name == channel.brand.name) {
+            CodedResponseBundle(
+                Scene.OTHER,
+                rawResponseBundle.responseStatus,
+                rawResponseBundle.responseHeaders,
+                rawResponseBundle.responseBody,
+                rawResponseBundle,
+            )
+        } else {
+            channel.brand.responseCodec.encode(rawResponseBundle)
+        }
+        val responseBundle = brand.responseCodec.decode(codedResponseBundle)
+
+        return responseBundle
     }
 
     private fun getChannel(channelTag: String): Channel? {
         val brand = brands.firstOrNull() ?: return null
-        return Channel(channelTag, brand, 0)
+        return Channel(channelTag, brand)
     }
 
     private fun getBrand(apiStyle: String): Brand? {

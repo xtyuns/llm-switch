@@ -10,5 +10,5 @@ class OpenAiBrand : Brand {
     override val name = "openai"
     override val requestCodec = OpenAiRequestCodec()
     override val responseCodec = OpenAiResponseCodec()
-    override val baseUrl = "https://api.openai.com"
+    override val defaultBaseUrl = "https://api.openai.com"
 }
