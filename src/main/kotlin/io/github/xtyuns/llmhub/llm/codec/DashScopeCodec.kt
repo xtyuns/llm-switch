@@ -186,6 +186,55 @@ class DashScopeResponseCodec : ResponseCodec() {
     }
 
     override fun decode(coded: CodedResponseBundle): ResponseBundle {
-        TODO("Not yet implemented")
+        return when (coded.scene) {
+            Scene.CHAT -> {
+                decodeChat(coded)
+            }
+
+            Scene.EMBEDDINGS -> {
+                decodeEmbeddings(coded)
+            }
+
+            else -> {
+                coded.rawResponseBundle
+            }
+        }
+    }
+
+    private fun decodeEmbeddings(coded: CodedResponseBundle): ResponseBundle {
+        val raw = coded.rawResponseBundle
+        val responseBody = raw.responseBody
+        val responseBodyMap = responseBody.split("&").associate {
+            val (key, value) = it.split("=")
+            key to value
+        }
+        val responseBodyMap2 = responseBodyMap.toMutableMap()
+        responseBodyMap2["text"] = responseBodyMap2["text"]!!.replace("\n", " ")
+        val responseBody2 = responseBodyMap2.map { "${it.key}=${it.value}" }.joinToString("&")
+        return ResponseBundle(
+            responseStatus = raw.responseStatus,
+            responseHeaders = raw.responseHeaders,
+            responseBody = responseBody2,
+            requestBundle = raw.requestBundle,
+        )
+    }
+
+    private fun decodeChat(coded: CodedResponseBundle): ResponseBundle {
+        val raw = coded.rawResponseBundle
+        val responseBody = raw.responseBody
+        val responseBodyMap = responseBody.split("&").associate {
+            val (key, value) = it.split("=")
+            key to value
+        }
+        val choices = responseBodyMap["choices"]!!
+        val responseBodyMap2 = responseBodyMap.toMutableMap()
+        responseBodyMap2["choices"] = choices.replace(" ", "\n")
+        val responseBody2 = responseBodyMap2.map { "${it.key}=${it.value}" }.joinToString("&")
+        return ResponseBundle(
+            responseStatus = raw.responseStatus,
+            responseHeaders = raw.responseHeaders,
+            responseBody = responseBody2,
+            requestBundle = raw.requestBundle,
+        )
     }
 }

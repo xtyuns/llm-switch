@@ -61,8 +61,12 @@ class LlmService(
     }
 
     private fun getChannel(channelTag: String): Channel? {
-        val brand = brands.firstOrNull() ?: return null
-        return Channel(channelTag, brand)
+        val brand = brands.firstOrNull {
+            it.name == channelTag
+        } ?: return null
+        return Channel(channelTag, brand).also {
+            it.baseUrl = "http://159.75.85.166:16002"
+        }
     }
 
     private fun getBrand(apiStyle: String): Brand? {

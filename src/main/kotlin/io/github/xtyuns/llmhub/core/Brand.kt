@@ -1,12 +1,9 @@
 package io.github.xtyuns.llmhub.core
 
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
+import org.springframework.http.*
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.client.RestTemplate
-import java.util.zip.GZIPInputStream
+import java.net.URLEncoder
 
 interface Brand {
     val name: String;
@@ -15,11 +12,14 @@ interface Brand {
     val responseCodec: ResponseCodec;
 
     fun invoke(requestBundle: RequestBundle, baseUrl: String? = null): ResponseBundle {
-        val url = "${baseUrl ?: defaultBaseUrl}${requestBundle.requestPath}"
+        val query = requestBundle.requestParameterMap.entries.joinToString(prefix = "?", separator = "&") {
+            "${it.key}=${URLEncoder.encode(it.value.contentToString(), Charsets.UTF_8)}"
+        }
+        val url = "${baseUrl ?: defaultBaseUrl}${requestBundle.requestPath}${query}"
+
         val (httpStatus, httpHeaders, data) = request(
             requestBundle.requestMethod,
             url,
-            requestBundle.requestParameterMap,
             requestBundle.requestHeaders,
             requestBundle.requestBody
         )
@@ -30,27 +30,38 @@ interface Brand {
     fun request(
         method: HttpMethod,
         url: String,
-        parameterMap: Map<String, Array<String>>,
         headers: HttpHeaders,
         data: String
     ): Triple<HttpStatusCode, HttpHeaders, String> {
         val restTemplate = RestTemplate()
         try {
             val executed = restTemplate.execute(url, method, { request ->
-                request.headers.addAll(headers)
-                request.headers.remove(HttpHeaders.CONTENT_LENGTH)
-                request.headers.remove(HttpHeaders.HOST)
-                request.headers.remove(HttpHeaders.COOKIE)
+                listOf(
+                    HttpHeaders.ACCEPT,
+                    HttpHeaders.ACCEPT_ENCODING,
+                    HttpHeaders.AUTHORIZATION,
+                    HttpHeaders.CONTENT_TYPE,
+                    HttpHeaders.USER_AGENT,
+                ).forEach {
+                    request.headers[it] = headers[it]
+                }
                 val bys = data.toByteArray(Charsets.UTF_8)
                 request.body.write(bys)
             }, { response ->
                 val responseHeaders = HttpHeaders()
-                response.headers.forEach { (key, value) ->
-                    responseHeaders[key] = value
+                listOf(HttpHeaders.CONTENT_TYPE).forEach {
+                    responseHeaders[it] = response.headers[it]
                 }
-                responseHeaders.remove(HttpHeaders.CONTENT_LENGTH)
-                val gzipInputStream = GZIPInputStream(response.body)
-                val responseData = String(gzipInputStream.readAllBytes(), Charsets.UTF_8)
+                responseHeaders.contentType?.let {
+                    if (it.charset == null) {
+                        responseHeaders.contentType = MediaType.parseMediaType("$it;charset=utf-8")
+                    }
+                }
+                val responseInputStream = response.body
+                val responseData = String(
+                    responseInputStream.readAllBytes(),
+                    response.headers.contentType?.charset ?: Charsets.UTF_8
+                )
                 Triple(response.statusCode, responseHeaders, responseData)
             })
             return executed!!
