@@ -6,6 +6,7 @@ import org.springframework.http.*
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.client.RestTemplate
 import java.net.URLEncoder
+import java.util.zip.GZIPInputStream
 
 interface Brand {
     val name: String;
@@ -53,7 +54,9 @@ interface Brand {
                 request.body.write(bys)
             }, { response ->
                 val responseHeaders = HttpHeaders()
-                listOf(HttpHeaders.CONTENT_TYPE).forEach {
+                listOf(
+                    HttpHeaders.CONTENT_TYPE,
+                ).forEach {
                     responseHeaders[it] = response.headers[it]
                 }
                 responseHeaders.contentType?.let {
@@ -61,7 +64,12 @@ interface Brand {
                         responseHeaders.contentType = MediaType.parseMediaType("$it;charset=utf-8")
                     }
                 }
-                val responseInputStream = response.body
+                val responseInputStream =
+                    if (response.headers[HttpHeaders.CONTENT_ENCODING]?.contains("gzip") == true) {
+                        GZIPInputStream(response.body)
+                    } else {
+                        response.body
+                    }
                 val responseData = String(
                     responseInputStream.readAllBytes(),
                     response.headers.contentType?.charset ?: Charsets.UTF_8

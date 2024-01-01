@@ -1,8 +1,6 @@
-package io.github.xtyuns.llmhub.llm.brand
+package io.github.xtyuns.llmhub.llm.dashscope
 
 import io.github.xtyuns.llmhub.core.Brand
-import io.github.xtyuns.llmhub.llm.codec.DashScopeRequestCodec
-import io.github.xtyuns.llmhub.llm.codec.DashScopeResponseCodec
 import org.springframework.stereotype.Component
 
 @Component

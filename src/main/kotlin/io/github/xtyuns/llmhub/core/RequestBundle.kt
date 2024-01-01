@@ -9,6 +9,7 @@ open class RequestBundle(
     val requestParameterMap: Map<String, Array<String>>,
     val requestHeaders: HttpHeaders,
     val requestBody: String,
+    val sourceCodedRequestBundle: CodedRequestBundle? = null,
 )
 
 class CodedRequestBundle(
