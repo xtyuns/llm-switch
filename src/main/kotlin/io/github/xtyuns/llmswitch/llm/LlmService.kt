@@ -1,6 +1,5 @@
 package io.github.xtyuns.llmswitch.llm
 
-import io.github.xtyuns.llmhub.core.*
 import io.github.xtyuns.llmswitch.dao.ChannelEntityRepository
 import io.github.xtyuns.llmswitch.core.Brand
 import io.github.xtyuns.llmswitch.core.Channel

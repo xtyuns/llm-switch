@@ -1,10 +1,10 @@
-package io.github.xtyuns.llmhub
+package io.github.xtyuns.llmswitch
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class LlmHubApplicationTests {
+class LlmSwitchApplicationTests {
 
     @Test
     fun contextLoads() {
