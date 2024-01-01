@@ -1,5 +1,7 @@
 package io.github.xtyuns.llmhub.core
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.*
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.client.RestTemplate
@@ -10,6 +12,8 @@ interface Brand {
     val defaultBaseUrl: String;
     val requestCodec: RequestCodec;
     val responseCodec: ResponseCodec;
+    val logger: Logger
+        get() = LoggerFactory.getLogger(javaClass)
 
     fun invoke(requestBundle: RequestBundle, baseUrl: String? = null): ResponseBundle {
         val query = requestBundle.requestParameterMap.entries.joinToString(prefix = "?", separator = "&") {
@@ -66,10 +70,10 @@ interface Brand {
             })
             return executed!!
         } catch (e: RestClientResponseException) {
-            e.printStackTrace()
+            logger.error("RestClientResponseException: ", e)
             return Triple(e.statusCode, e.responseHeaders ?: HttpHeaders.EMPTY, e.responseBodyAsString)
         } catch (e: Exception) {
-            e.printStackTrace()
+            logger.error("Exception: ", e)
             return Triple(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, "")
         }
     }

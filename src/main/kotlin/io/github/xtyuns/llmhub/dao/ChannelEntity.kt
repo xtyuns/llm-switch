@@ -1,16 +1,30 @@
 package io.github.xtyuns.llmhub.dao
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 @Entity
-class ChannelEntity {
+@Table(name = "channel")
+open class ChannelEntity {
     @Id
-    var id: Long? = null
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    open var id: Long? = null
 
-    var name: String? = null
+    @Column(name = "name", nullable = false, length = 32)
+    open var name: String? = null
 
-    var brandName: String? = null
+    @Column(name = "brand_name", nullable = false, length = 32)
+    open var brandName: String? = null
 
-    var priority: Int? = null
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "tags")
+    open var tags: MutableSet<String>? = null
+
+    @Column(name = "priority", nullable = false)
+    open var priority: Int? = null
+
+    @Column(name = "base_url")
+    open var baseUrl: String? = null
 }

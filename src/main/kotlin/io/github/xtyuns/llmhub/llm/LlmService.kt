@@ -1,13 +1,15 @@
 package io.github.xtyuns.llmhub.llm
 
 import io.github.xtyuns.llmhub.core.*
+import io.github.xtyuns.llmhub.dao.ChannelEntityRepository
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
 class LlmService(
-    private val brands: List<Brand>
+    private val brands: List<Brand>,
+    private val channelEntityRepository: ChannelEntityRepository,
 ) {
     fun process(
         channelTag: String,
@@ -20,7 +22,7 @@ class LlmService(
             "brand not found",
             rawRequestBundle
         )
-        val channel = getChannel(channelTag) ?: return ResponseBundle(
+        val channel = pickChannel(channelTag) ?: return ResponseBundle(
             HttpStatus.BAD_REQUEST,
             HttpHeaders.EMPTY,
             "channel not found",
@@ -60,16 +62,19 @@ class LlmService(
         return responseBundle
     }
 
-    private fun getChannel(channelTag: String): Channel? {
-        val brand = brands.firstOrNull {
-            it.name == channelTag
-        } ?: return null
-        return Channel(channelTag, brand).also {
-            it.baseUrl = "http://159.75.85.166:16002"
+    private fun pickChannel(channelTag: String): Channel? {
+        val channelEntity = channelEntityRepository.findFirstByTagWithDescPriority(channelTag) ?: return null
+        val brand = getBrand(channelEntity.brandName!!) ?: return null
+        return Channel(channelEntity.name!!, brand).also {
+            channelEntity.tags?.let { tags ->
+                it.tags.addAll(tags)
+            }
+            it.priority = channelEntity.priority!!
+            it.baseUrl = channelEntity.baseUrl
         }
     }
 
-    private fun getBrand(apiStyle: String): Brand? {
-        return brands.firstOrNull { it.name == apiStyle }
+    private fun getBrand(brandName: String): Brand? {
+        return brands.firstOrNull { it.name == brandName }
     }
 }
