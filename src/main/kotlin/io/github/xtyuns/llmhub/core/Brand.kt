@@ -2,17 +2,21 @@ package io.github.xtyuns.llmhub.core
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.*
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.MediaType
 import org.springframework.web.client.RestClientResponseException
 import org.springframework.web.client.RestTemplate
 import java.net.URLEncoder
 import java.util.zip.GZIPInputStream
 
 interface Brand {
-    val name: String;
-    val defaultBaseUrl: String;
-    val requestCodec: RequestCodec;
-    val responseCodec: ResponseCodec;
+    val name: String
+    val defaultBaseUrl: String
+    val requestCodec: RequestCodec
+    val responseCodec: ResponseCodec
     val logger: Logger
         get() = LoggerFactory.getLogger(javaClass)
 

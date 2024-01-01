@@ -1,6 +1,13 @@
-package io.github.xtyuns.llmhub.llm.codec
+package io.github.xtyuns.llmhub.llm.openai
 
-import io.github.xtyuns.llmhub.core.*
+import io.github.xtyuns.llmhub.core.CodedRequestBundle
+import io.github.xtyuns.llmhub.core.CodedResponseBundle
+import io.github.xtyuns.llmhub.core.RequestBundle
+import io.github.xtyuns.llmhub.core.RequestCodec
+import io.github.xtyuns.llmhub.core.ResponseBundle
+import io.github.xtyuns.llmhub.core.ResponseCodec
+import io.github.xtyuns.llmhub.core.Scene
+
 
 class OpenAiRequestCodec : RequestCodec() {
     override fun encode(raw: RequestBundle): CodedRequestBundle {

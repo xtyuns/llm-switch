@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.dao;
+package io.github.xtyuns.llmhub.dao
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor

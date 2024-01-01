@@ -1,8 +1,6 @@
-package io.github.xtyuns.llmhub.llm.brand
+package io.github.xtyuns.llmhub.llm.openai
 
 import io.github.xtyuns.llmhub.core.Brand
-import io.github.xtyuns.llmhub.llm.codec.OpenAiRequestCodec
-import io.github.xtyuns.llmhub.llm.codec.OpenAiResponseCodec
 import org.springframework.stereotype.Component
 
 @Component
