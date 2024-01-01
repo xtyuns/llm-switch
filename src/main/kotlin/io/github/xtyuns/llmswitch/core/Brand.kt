@@ -83,7 +83,7 @@ interface Brand {
             return executed!!
         } catch (e: RestClientResponseException) {
             logger.error("RestClientResponseException: ", e)
-            return Triple(e.statusCode, e.responseHeaders ?: HttpHeaders.EMPTY, e.responseBodyAsString)
+            return Triple(e.statusCode, HttpHeaders.EMPTY, e.responseBodyAsString)
         } catch (e: Exception) {
             logger.error("Exception: ", e)
             return Triple(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, "")
