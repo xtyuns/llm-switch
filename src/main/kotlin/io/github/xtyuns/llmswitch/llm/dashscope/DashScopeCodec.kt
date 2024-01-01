@@ -1,7 +1,20 @@
-package io.github.xtyuns.llmhub.llm.dashscope
+package io.github.xtyuns.llmswitch.llm.dashscope
 
 import io.github.xtyuns.llmhub.core.*
-import io.github.xtyuns.llmhub.utils.JsonUtils
+import io.github.xtyuns.llmswitch.utils.JsonUtils
+import io.github.xtyuns.llmswitch.core.ChatRequestBody
+import io.github.xtyuns.llmswitch.core.ChatResponseBody
+import io.github.xtyuns.llmswitch.core.Choice
+import io.github.xtyuns.llmswitch.core.CodedRequestBundle
+import io.github.xtyuns.llmswitch.core.CodedResponseBundle
+import io.github.xtyuns.llmswitch.core.Message
+import io.github.xtyuns.llmswitch.core.MessageRole
+import io.github.xtyuns.llmswitch.core.RequestBundle
+import io.github.xtyuns.llmswitch.core.RequestCodec
+import io.github.xtyuns.llmswitch.core.ResponseBundle
+import io.github.xtyuns.llmswitch.core.ResponseCodec
+import io.github.xtyuns.llmswitch.core.Scene
+import io.github.xtyuns.llmswitch.core.Usage
 import org.springframework.http.HttpMethod
 import java.time.Instant
 import java.util.*

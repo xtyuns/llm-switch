@@ -1,12 +1,12 @@
-package io.github.xtyuns.llmhub.llm.openai
+package io.github.xtyuns.llmswitch.llm.openai
 
-import io.github.xtyuns.llmhub.core.CodedRequestBundle
-import io.github.xtyuns.llmhub.core.CodedResponseBundle
-import io.github.xtyuns.llmhub.core.RequestBundle
-import io.github.xtyuns.llmhub.core.RequestCodec
-import io.github.xtyuns.llmhub.core.ResponseBundle
-import io.github.xtyuns.llmhub.core.ResponseCodec
-import io.github.xtyuns.llmhub.core.Scene
+import io.github.xtyuns.llmswitch.core.CodedRequestBundle
+import io.github.xtyuns.llmswitch.core.CodedResponseBundle
+import io.github.xtyuns.llmswitch.core.RequestBundle
+import io.github.xtyuns.llmswitch.core.RequestCodec
+import io.github.xtyuns.llmswitch.core.ResponseBundle
+import io.github.xtyuns.llmswitch.core.ResponseCodec
+import io.github.xtyuns.llmswitch.core.Scene
 
 
 class OpenAiRequestCodec : RequestCodec() {

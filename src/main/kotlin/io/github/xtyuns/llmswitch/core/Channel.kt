@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.core
+package io.github.xtyuns.llmswitch.core
 
 class Channel(val name: String, val brand: Brand) {
     val tags: MutableSet<String> = mutableSetOf()

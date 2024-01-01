@@ -1,6 +1,6 @@
-package io.github.xtyuns.llmhub.llm.dashscope
+package io.github.xtyuns.llmswitch.llm.dashscope
 
-import io.github.xtyuns.llmhub.core.Brand
+import io.github.xtyuns.llmswitch.core.Brand
 import org.springframework.stereotype.Component
 
 @Component

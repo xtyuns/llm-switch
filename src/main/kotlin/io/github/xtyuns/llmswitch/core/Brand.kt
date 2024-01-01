@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.core
+package io.github.xtyuns.llmswitch.core
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

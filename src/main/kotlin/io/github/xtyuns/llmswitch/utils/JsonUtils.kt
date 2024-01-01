@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.utils
+package io.github.xtyuns.llmswitch.utils
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper

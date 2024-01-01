@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.core
+package io.github.xtyuns.llmswitch.core
 
 abstract class Codec<R, C> {
     abstract fun encode(raw: R): C

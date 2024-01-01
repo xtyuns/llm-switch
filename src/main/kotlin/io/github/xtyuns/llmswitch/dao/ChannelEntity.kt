@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.dao
+package io.github.xtyuns.llmswitch.dao
 
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode

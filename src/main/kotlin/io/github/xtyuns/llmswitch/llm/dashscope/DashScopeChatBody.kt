@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.llm.dashscope
+package io.github.xtyuns.llmswitch.llm.dashscope
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

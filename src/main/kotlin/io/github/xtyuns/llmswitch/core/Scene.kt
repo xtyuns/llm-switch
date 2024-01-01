@@ -1,4 +1,4 @@
-package io.github.xtyuns.llmhub.core
+package io.github.xtyuns.llmswitch.core
 
 enum class Scene(description: String) {
     CHAT("/v1/chat/completion 接口"),

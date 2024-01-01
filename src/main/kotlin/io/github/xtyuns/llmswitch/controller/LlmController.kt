@@ -1,7 +1,7 @@
-package io.github.xtyuns.llmhub.controller
+package io.github.xtyuns.llmswitch.controller
 
-import io.github.xtyuns.llmhub.core.RequestBundle
-import io.github.xtyuns.llmhub.llm.LlmService
+import io.github.xtyuns.llmswitch.core.RequestBundle
+import io.github.xtyuns.llmswitch.llm.LlmService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders

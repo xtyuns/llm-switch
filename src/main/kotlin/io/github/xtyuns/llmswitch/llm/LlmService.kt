@@ -1,7 +1,14 @@
-package io.github.xtyuns.llmhub.llm
+package io.github.xtyuns.llmswitch.llm
 
 import io.github.xtyuns.llmhub.core.*
-import io.github.xtyuns.llmhub.dao.ChannelEntityRepository
+import io.github.xtyuns.llmswitch.dao.ChannelEntityRepository
+import io.github.xtyuns.llmswitch.core.Brand
+import io.github.xtyuns.llmswitch.core.Channel
+import io.github.xtyuns.llmswitch.core.CodedRequestBundle
+import io.github.xtyuns.llmswitch.core.CodedResponseBundle
+import io.github.xtyuns.llmswitch.core.RequestBundle
+import io.github.xtyuns.llmswitch.core.ResponseBundle
+import io.github.xtyuns.llmswitch.core.Scene
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
